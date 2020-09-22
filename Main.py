@@ -60,5 +60,6 @@ def Timer():
              popCycle(minOn,minOff)
             else:
                 PopUpEnd()
+                break
 
 Timer()
