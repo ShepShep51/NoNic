@@ -38,6 +38,9 @@ def popCycle(on, off):
         offTime = off * 60
         sleep(offTime)
 
+#TODO: Write a main menue GUI that shows start time and end time, shows %decrease in time overall,
+# total money saved, some bar graphs?, timestamps of the previous day, and an insperational message?
+
 def Timer():
     standin = datetime.date(1,1,1)
     minOn = 30
@@ -56,10 +59,12 @@ def Timer():
             startTime = (datetime.datetime.combine(datetime.date(1,1,1),startTime)+minShift).time()
             endTime = (datetime.datetime.combine(datetime.date(1,1,1),endTime)-minShift).time()
         else:
-            while datetime.datetime.now().time() >= comb and datetime.datetime.now().time() <= combEnd:
-             popCycle(minOn,minOff)
-            else:
-                PopUpEnd()
+            if datetime.datetime.now().time() < comb:
+             sleep(60)
+            elif datetime.datetime.now().time() > combEnd:
                 break
+            else:
+                popCycle(minOn,minOff)
+
 
 Timer()
