@@ -33,21 +33,33 @@ def PopUpEnd():
     popup.mainloop()
     return timeReturn()
 
-def popCycle(on, off):
+def popCycle(on, off, startTime, endTime):
     ### A function to continuously call the start/stop functions, with pauses inbetween
-    while True:
+    #Changed from while True because once called it would not stop even if it was outside run times
+    while datetime.datetime.now().time() > startTime and datetime.datetime.now().time() < endTime:
         PopUpStart()
         onTime = on * 60
         sleep(onTime)
         PopUpEnd()
-        offTime = off * 60
+        offTime = off.seconds
         sleep(offTime)
+
+def dateCheck(start,minOff,minInc,startTime,endTime):
+    sDate = datetime.datetime.strptime(start, '%m/%d/%y')
+    cDate = datetime.datetime.now().date()
+    dateDiff = cDate - sDate.date()
+    minShift =  datetime.timedelta(minutes=minInc) * dateDiff.days
+    minutesOff = datetime.timedelta(minutes=minOff)
+
+    minutesOff = minutesOff + minShift
+    startTime = (datetime.datetime.combine(datetime.date(1,1,1),startTime)+minShift).time()
+    endTime = (datetime.datetime.combine(datetime.date(1,1,1),endTime)-minShift).time()
+    return (minutesOff,startTime,endTime)
 
 #TODO: Write a main menue GUI that shows start time and end time, shows %decrease in time overall,
 # total money saved, some bar graphs?, timestamps of the previous day, and an insperational message?
 
 def Timer():
-    standin = datetime.date(1,1,1) #Dummy date to allow a .time object to be raised to a .datetime object
     minOn = 30 #starting number of minutes on
     minOff = 60 #starting number of minutes off
     startTime = datetime.time(7,30,0) #starting time for when program can start
@@ -55,22 +67,14 @@ def Timer():
     minShift = datetime.timedelta(minutes=5) #incriment that start/stop should be increased/decreased respectively
     d1 = datetime.date(2020,9,21) #initialized date comparison
     d2 = datetime.date.today() #comparison for d1
-    comb = datetime.datetime.combine(standin,startTime).time() #raises startTime to a .datetime object
-    combEnd = datetime.datetime.combine(standin,endTime).time() #raises endTime to a .datetime object
+    minOff, startTime, endTime = dateCheck('9/21/20',minOff,5,startTime,endTime)
     while True:
-        if d1 != d2: #Should add a comparison between current date and 9/21/2020 showing number of days.
-                     #Otherwise it will revert back to base state and never increase
-            d1 = datetime.date.today()
-            minOff = minOff + 5 #Increases length of break
-            startTime = (datetime.datetime.combine(datetime.date(1,1,1),startTime)+minShift).time()#Makes startTime later
-            endTime = (datetime.datetime.combine(datetime.date(1,1,1),endTime)-minShift).time() #Makes endTime earlier
+        if datetime.datetime.now().time() < startTime:
+         sleep(60)
+        elif datetime.datetime.now().time() > endTime:
+            break
         else:
-            if datetime.datetime.now().time() < comb:
-             sleep(60)
-            elif datetime.datetime.now().time() > combEnd:
-                break
-            else:
-                popCycle(minOn,minOff)
+            popCycle(minOn,minOff,startTime,endTime)
 
 
 Timer()
