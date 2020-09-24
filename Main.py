@@ -68,6 +68,7 @@ def Timer():
     d1 = datetime.date(2020,9,21) #initialized date comparison
     d2 = datetime.date.today() #comparison for d1
     minOff, startTime, endTime = dateCheck('9/21/20',minOff,5,startTime,endTime)
+    print(startTime,endTime,minOff)
     while True:
         if datetime.datetime.now().time() < startTime:
          sleep(60)
