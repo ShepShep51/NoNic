@@ -35,14 +35,25 @@ def PopUpEnd():
 
 def popCycle(on, off, startTime, endTime):
     ### A function to continuously call the start/stop functions, with pauses inbetween
-    #Changed from while True because once called it would not stop even if it was outside run times
-    while datetime.datetime.now().time() > startTime and datetime.datetime.now().time() < endTime:
-        PopUpStart()
-        onTime = on * 60
-        sleep(onTime)
-        PopUpEnd()
-        offTime = off.seconds
-        sleep(offTime)
+    now = datetime.datetime.now()
+    st = now.replace(hour=startTime.hour,minute=startTime.minute,second=startTime.second)
+    et = now.replace(hour=endTime.hour,minute=endTime.minute,second=endTime.second)
+    while True:
+        if now > st and now < et:
+            PopUpStart()
+            onTime = on * 60
+            sleep(onTime)
+            PopUpEnd()
+            mOff = datetime.timedelta(minutes=off)
+            total = now + mOff
+            if total > endTime:
+                mOff = endTime-now
+                sleep(mOff.seconds)
+            else:
+                offTime = mOff.seconds
+                sleep(offTime)
+        else:
+            break
 
 def dateCheck(start,minOff,minInc,startTime,endTime):
     sDate = datetime.datetime.strptime(start, '%m/%d/%y')
